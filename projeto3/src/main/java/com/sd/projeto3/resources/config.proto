@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+option java_package = "com.sd.projeto1.main";
+
+
+service Messenger{
+    rpc Monitora (MonitorRequest) returns (MonitorRepley){}
+}
+
+message MonitorRequest{
+    String operacao = 1;
+    int chave = 2;
+
+}
+
+message MonitoraRepley{
+    String operacao = 1;
+    int chave = 2;
+}

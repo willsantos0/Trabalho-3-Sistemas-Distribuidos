@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.sd.projeto3.proto";
+option java_outer_classname = "Message";
+option objc_class_prefix = "MSG";
+
+package com.sd.projeto3.proto;
+
+message ContextRequest {
+	string instruction = 1;
+}
+
+message ContextResponse {
+	string message = 1;
+}
+
+message SubscribeRequest {
+    string key = 1;
+}
+
+message SubscribeResponse {
+    string message = 1;
+}
+
+service ContextService {
+	rpc insert(ContextRequest) returns (ContextResponse);
+	rpc update(ContextRequest) returns (ContextResponse);
+	rpc delete(ContextRequest) returns (ContextResponse);
+	rpc find(ContextRequest) returns (ContextResponse);
+    rpc subscribe(SubscribeRequest) returns (stream SubscribeResponse);
+
+}
