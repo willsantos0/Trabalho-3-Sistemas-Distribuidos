@@ -17,53 +17,33 @@ import java.util.concurrent.Executors;
 
 public class Server{
     
-    private static MapaDao mapaDAO = new MapaDao();
-    
-        private static PropertyManagement mySettings = new PropertyManagement();
-        private static DatagramSocket serverSocket;
-	private static Queue< String > logQueue = new LinkedList< String >();
-	private static Queue< String > executeQueue = new LinkedList< String >();
-	private static Map< String, List< StreamObserver< SubscribeResponse > > > observers = new HashMap< String, List< StreamObserver< SubscribeResponse > > >();
-        private static ExecutorService executor;
+    private static PropertyManagement mySettings = new PropertyManagement();
+    private static DatagramSocket serverSocket;
+    private static Queue< String > logQueue = new LinkedList< String >();
+    private static Queue< String > executeQueue = new LinkedList< String >();
+    private static Map< String, List< StreamObserver< SubscribeResponse > > > observers = new HashMap< String, List< StreamObserver< SubscribeResponse > > >();
+    private static ExecutorService executor;
 		
     
     public static void main(String[] args) throws Exception {
-        List<Mapa> logs = new ArrayList<Mapa>();
         Operacoes crud = new Operacoes();
+        
         serverSocket = new DatagramSocket( mySettings.getPortGRPC());
-       
-		
+       	
         executor = Executors.newFixedThreadPool(50);
         
-        mapaDAO.snapshot();
+        // Servidor
         
-        logs = mapaDAO.buscarTodos();
+        new Thread(new ThreadSnapshot()).start();
         
-        for(Mapa m: logs){
-            switch (m.getTipoOperacaoId()) {
-                case 1:
-                    crud.salvar(m);
-                    break;
-                case 2:
-                    crud.editar(m);
-                    break;
-                case 3:
-                    crud.editar(m);
-                    break;
-                default:
-                    break;
-            }
-        }
-        
-        System.out.println("Log do Disco Recuperado");
-        System.out.println("Tamanho do log: " + crud.getMapa().size() + "\n");
-        
-        
-        System.out.println("Servidor Iniciado...");
         new Thread(new ServerThreadReceive()).start();
         
-        ThreadAlertSubscribes executorThread = new ThreadAlertSubscribes( serverSocket, logQueue, executeQueue, crud, observers );
-		
+        Thread.sleep(1000);
+        System.out.println("Servidor Iniciado...");
+        
+        // Servidor GRPC
+        
+        ThreadAlertSubscribes executorThread = new ThreadAlertSubscribes( serverSocket, logQueue, executeQueue, crud, observers );	
         ServerThreadGRPC grpcServerThread = new ServerThreadGRPC( logQueue, executeQueue, crud, mySettings, observers );
 	
         executor.execute( grpcServerThread );

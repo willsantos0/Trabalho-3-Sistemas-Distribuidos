@@ -70,6 +70,10 @@ public class Operacoes {
     public Map<BigInteger, String> getMapa() {
         return mapa;
     }
+
+    public void setMapa(Map<BigInteger, String> mapa) {
+        Operacoes.mapa = mapa;
+    }
     
     public String buscarTodos() {
 		String toString = "";
