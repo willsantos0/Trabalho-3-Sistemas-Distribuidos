@@ -11,6 +11,7 @@ public class Mapa implements Serializable{
     private String texto;
     private int tipoOperacaoId;
     private Date data;
+    private int snapshotid;
     
     public int getId() {
         return id;
@@ -46,6 +47,14 @@ public class Mapa implements Serializable{
 
     public void setData(Date data) {
         this.data = data;
+    }
+
+    public int getSnapshotid() {
+        return snapshotid;
+    }
+
+    public void setSnapshotid(int snapshotid) {
+        this.snapshotid = snapshotid;
     }
     
     

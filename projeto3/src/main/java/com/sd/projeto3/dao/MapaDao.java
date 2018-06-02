@@ -15,7 +15,9 @@ import java.util.List;
 public class MapaDao implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    
+    private static SnapshotDao snapshotDao = new SnapshotDao();
+    
     public Mapa buscarPorId(Integer id) throws Exception {
         Connection con = null;
         PreparedStatement ps = null;
@@ -48,6 +50,9 @@ public class MapaDao implements Serializable {
     }
 
     public Mapa salvar(Mapa mapa) throws Exception {
+        
+        Integer snapshotid = snapshotDao.retornarIdUltimoSnapshot();
+        
         Connection con = null;
         PreparedStatement ps = null;
 
@@ -55,11 +60,12 @@ public class MapaDao implements Serializable {
             con = SQLiteConnection.connect();
 
             ps = con.prepareStatement(
-                    "insert into mapa(chave, texto, tipo, data) "
-                    + "VALUES (?, ?, ?, datetime('now', 'localtime'))");
+                    "insert into mapa(chave, texto, tipo, data, snapshotid) "
+                    + "VALUES (?, ?, ?, datetime('now', 'localtime'), ?)");
             ps.setInt(1, mapa.getChave());
             ps.setString(2, mapa.getTexto());
             ps.setInt(3, mapa.getTipoOperacaoId());
+            ps.setInt(4, snapshotid);
 
             if (ps.executeUpdate() == 0) {
                 return null;
@@ -91,7 +97,7 @@ public class MapaDao implements Serializable {
             }
 
             con = SQLiteConnection.connect();
-            ps = con.prepareStatement("update mapa set texto = ?, tipo = ?, data = datetime('now', 'localtime') where chave = ?");
+            ps = con.prepareStatement("update mapa set texto = ?, tipo = ?, data = datetime('now', 'localtime') where chave = ? and snapshotid = (select id from snapshot order by data desc limit 1)");
             ps.setString(1, mapa.getTexto());
             ps.setInt(2, mapa.getTipoOperacaoId());
             ps.setInt(3, mapa.getChave());
@@ -117,7 +123,7 @@ public class MapaDao implements Serializable {
 
         try {
             con = SQLiteConnection.connect();
-            ps = con.prepareStatement("delete from mapa where chave = ?");
+            ps = con.prepareStatement("delete from mapa where chave = ? and snapshotid = (select id from snapshot order by data desc limit 1)");
             ps.setInt(1, id);
 
             Mapa m = buscarPorId(id);
@@ -143,7 +149,9 @@ public class MapaDao implements Serializable {
             con = SQLiteConnection.connect();
             PreparedStatement pstmt = con
                     .prepareStatement("select chave, texto, tipo, data "
-                            + "from mapa order by data");
+                            + "from mapa m "
+                            + "where snapshotid = (select id from snapshot order by data desc limit 1) "
+                            + "order by data");
 
             ResultSet rs = pstmt.executeQuery();
 
@@ -170,34 +178,4 @@ public class MapaDao implements Serializable {
 
     }
     
-    public void snapshot() throws Exception {
-        Connection con = null;
-
-        try {
-            con = SQLiteConnection.connect();
-            PreparedStatement pstmt = con
-                    .prepareStatement("SELECT id, chave " +
-                                "FROM mapa " +
-                                "where id not in (SELECT id from mapa order by data desc limit 5); ");
-
-            ResultSet rs = pstmt.executeQuery();
-
-            List<Integer> chaves = new ArrayList<Integer>();
-
-            while (rs.next()) {
-               
-                chaves.add(rs.getInt("chave"));
-            }
-            
-            con.close();
-            
-            for(Integer chave : chaves)
-                excluir(chave);
-            
-        } catch (SQLException | ParseException e) {
-            throw new Exception("Erro ao snapshots anteriores " + e.getMessage());
-        }
-
-    }
-
 }

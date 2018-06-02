@@ -1,6 +1,7 @@
 package com.sd.projeto3.main;
 
 import com.sd.projeto3.dao.MapaDao;
+import com.sd.projeto3.dao.SnapshotDao;
 import com.sd.projeto3.model.Mapa;
 import com.sd.projeto3.model.MapaDTO;
 import java.io.IOException;
@@ -19,6 +20,7 @@ import org.apache.commons.lang3.SerializationUtils;
  */
 public class ThreadSnapshot implements Runnable{
 
+    private static SnapshotDao snapshotDao = new SnapshotDao();
     private static MapaDao mapaDAO = new MapaDao();
     
     @Override
@@ -30,7 +32,10 @@ public class ThreadSnapshot implements Runnable{
                 
                 crud.setMapa(new HashMap());
                 
-                mapaDAO.snapshot();
+                if(snapshotDao.retornaQtdSnapshots() >= 4)
+                    snapshotDao.excluirUltimoSnapshot();
+              
+                snapshotDao.copiarSnapshot();
                 logs = mapaDAO.buscarTodos();
                 
                 for(Mapa m: logs){
