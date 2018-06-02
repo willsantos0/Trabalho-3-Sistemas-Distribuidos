@@ -1,23 +1,13 @@
 package com.sd.projeto3.main;
 
-import com.sd.projeto3.dao.MapaDao;
-import com.sd.projeto3.model.Mapa;
-import com.sd.projeto3.model.MapaDTO;
 import com.sd.projeto3.util.PropertyManagement;
-import com.sd.projeto3.util.Utilidades;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.lang3.SerializationUtils;
 
 public class ServerThreadReceive implements Runnable {
 

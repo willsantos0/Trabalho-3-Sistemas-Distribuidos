@@ -118,16 +118,21 @@ public class ServerThreadDisco implements Runnable {
                 }
                 break;
             case 2:
+                
                 if(crud.buscarObjeto(mapaEntity) == null){
                     mapaDTO.setMensagem("Chave não encontrada para atualizar!");
                 }else{
                     Mapa ma = mapaDAO.salvar(mapaEntity);
-                    mapaDTO.setMapa(ma);
-                    crud.editar(ma);
-                    imprimeCRUD(ma);
-                    mapaDTO.setMensagem("Atualizado com Sucesso!");
+                    
+                    if (ma != null) {                   
+                        mapaDTO.setMapa(ma);
+                        crud.editar(ma);
+                        imprimeCRUD(ma);
+                        mapaDTO.setMensagem("Atualizado com Sucesso!");
+                    }else{
+                        mapaDTO.setMensagem("Erro ao atualizar!");
+                    }
                 }
-                
                 break;
             case 3:
                 
@@ -135,14 +140,20 @@ public class ServerThreadDisco implements Runnable {
                 
                 if(me == null){
                     mapaDTO.setMensagem("Chave não encontrada para excluir!");
-                }else{
-                     
+                }else{ 
+
+                    Mapa md = mapaDAO.salvar(mapaEntity);
+                    
+                    if (md != null) {    
                      crud.excluir(me);
                      me.setTipoOperacaoId(3);
-                     mapaDTO.setMapa(me);
-                    
+                     mapaDTO.setMapa(me);                   
                      imprimeCRUD(me);
                      mapaDTO.setMensagem("Excluido com Sucesso!");
+                    }else{
+                        mapaDTO.setMensagem("Erro ao excluir!");
+                    }
+                     
                 }
                
                 break;
@@ -152,16 +163,18 @@ public class ServerThreadDisco implements Runnable {
                 
                 if(mb == null){
                     mapaDTO.setMensagem("Chave não encontrada!");
-                }else{
-                
+                }else{                
                     mb.setTipoOperacaoId(4);
                     mapaDTO.setMapa(mb);
-
                     imprimeCRUD(mb);
                     mapaDTO.setMensagem("Recuperado com Sucesso!");                   
                 }
                 break;
-          
+                case 5:
+//                ComandResponse rspGrpc = ComandResponse.newBuilder().setCmd(mapaEntity.getChave() + " " + Utilidades.retornaTipoOperacao(mapaEntity.getTipoOperacaoId())).build();
+//                this.responseObserverGrpc.onNext(rspGrpc);
+//                this.responseObserverGrpc.onCompleted();
+                break;
             default:
                 mapaDTO.setMapa(null);
                 mapaDTO.setMensagem("Opção inválida");
