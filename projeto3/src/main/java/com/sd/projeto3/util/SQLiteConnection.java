@@ -3,6 +3,7 @@ package com.sd.projeto3.util;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import org.sqlite.SQLiteConfig;
 
 public class SQLiteConnection {
 
@@ -12,12 +13,14 @@ public class SQLiteConnection {
         Connection conn = null;
         try {
 
-           // Class.forName("org.sqlite.JDBC");
+            Class.forName("org.sqlite.JDBC");
             
             String url = "jdbc:sqlite:C:/sqlite/projeto1sd.db";
 
-            conn = DriverManager.getConnection(url);
-
+            SQLiteConfig config = new SQLiteConfig(); 
+            config.enforceForeignKeys(true);  
+            conn = DriverManager.getConnection(url, config.toProperties());
+          
             return conn;
 
         } catch (SQLException ex) {

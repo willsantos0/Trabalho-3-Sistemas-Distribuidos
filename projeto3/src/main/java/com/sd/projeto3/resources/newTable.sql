@@ -12,7 +12,7 @@ CREATE TABLE mapa (
     tipo       INTEGER NOT NULL,
     texto      TEXT,
     data       DATE    NOT NULL,
-    snapshotid BIGINT  CONSTRAINT fk_snapshot REFERENCES snapshot (id) ON DELETE CASCADE
+    snapshotid INTEGER  CONSTRAINT fk_snapshot REFERENCES snapshot (id) ON DELETE CASCADE
                                                                        ON UPDATE NO ACTION
                        NOT NULL
 );
