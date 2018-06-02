@@ -88,7 +88,7 @@ public class ServerThreadDisco implements Runnable {
         System.out.println("Chave: " + mapa1.getChave());
         System.out.println("Texto: " + mapa1.getTexto());
         System.out.println("Tipo de Operaçao: " + Utilidades.retornaTipoOperacao(mapa1.getTipoOperacaoId()));
-        System.out.println("Data: " + mapa1.getData());
+        //System.out.println("Data: " + mapa1.getData());
         System.out.println("Tamanho da fila: " + crud.getMapa().size());
         System.out.println("===============================");
     }
@@ -100,13 +100,10 @@ public class ServerThreadDisco implements Runnable {
         switch (mapaEntity.getTipoOperacaoId()) {
             case 1:
                 
-                Mapa mbi = mapaDAO.buscarPorId(mapaEntity.getChave());
-                
-                if(mbi.getChave() != 0){
-                   mapaDTO.setMensagem("Já existe mensagem com essa chave!");
-                   break;
+                if(crud.buscarObjeto(mapaEntity) != null){
+                    mapaDTO.setMensagem("Já existe mensagem com essa chave!");
+                    break;
                 }
-                    
                 
                 Mapa mi = mapaDAO.salvar(mapaEntity);
                 
@@ -121,51 +118,50 @@ public class ServerThreadDisco implements Runnable {
                 }
                 break;
             case 2:
-                Mapa ma = mapaDAO.editar(mapaEntity);
-                
-                if (ma != null) {
+                if(crud.buscarObjeto(mapaEntity) == null){
+                    mapaDTO.setMensagem("Chave não encontrada para atualizar!");
+                }else{
+                    Mapa ma = mapaDAO.salvar(mapaEntity);
                     mapaDTO.setMapa(ma);
                     crud.editar(ma);
                     imprimeCRUD(ma);
                     mapaDTO.setMensagem("Atualizado com Sucesso!");
-
-                } else {
-                    mapaDTO.setMensagem("Erro ao atualizar!");
                 }
+                
                 break;
             case 3:
-                Mapa me = mapaDAO.excluir(mapaEntity.getChave());
                 
-                if (me != null) {
-                    me.setTipoOperacaoId(3);
-                    mapaDTO.setMapa(me);
-                    crud.excluir(me);
-                    imprimeCRUD(me);
-                    mapaDTO.setMensagem("Excluido com Sucesso!");
-
-                } else {
+                Mapa me = crud.buscarObjeto(mapaEntity);
+                
+                if(me == null){
                     mapaDTO.setMensagem("Chave não encontrada para excluir!");
+                }else{
+                     
+                     crud.excluir(me);
+                     me.setTipoOperacaoId(3);
+                     mapaDTO.setMapa(me);
+                    
+                     imprimeCRUD(me);
+                     mapaDTO.setMensagem("Excluido com Sucesso!");
                 }
+               
                 break;
             case 4:
-                Mapa mb = mapaDAO.buscarPorId(mapaEntity.getChave());
                 
-                if (mb.getChave() != 0) {
+                Mapa mb = crud.buscarObjeto(mapaEntity);
+                
+                if(mb == null){
+                    mapaDTO.setMensagem("Chave não encontrada!");
+                }else{
+                
                     mb.setTipoOperacaoId(4);
                     mapaDTO.setMapa(mb);
 
                     imprimeCRUD(mb);
-                    mapaDTO.setMensagem("Recuperado com Sucesso!");
-
-                } else {
-                    mapaDTO.setMensagem("Erro ao recuperar!");
+                    mapaDTO.setMensagem("Recuperado com Sucesso!");                   
                 }
                 break;
-            case 5:
-//                ComandResponse rspGrpc = ComandResponse.newBuilder().setCmd(mapaEntity.getChave() + " " + Utilidades.retornaTipoOperacao(mapaEntity.getTipoOperacaoId())).build();
-//                this.responseObserverGrpc.onNext(rspGrpc);
-//                this.responseObserverGrpc.onCompleted();
-                break;
+          
             default:
                 mapaDTO.setMapa(null);
                 mapaDTO.setMensagem("Opção inválida");

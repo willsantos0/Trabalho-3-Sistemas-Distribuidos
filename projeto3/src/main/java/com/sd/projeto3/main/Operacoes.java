@@ -53,6 +53,19 @@ public class Operacoes {
 			return "Chave nao encontrada";
 		}
     }
+    
+    public Mapa buscarObjeto(Mapa mapa1) {
+        BigInteger chave = new BigInteger(String.valueOf(mapa1.getChave()));
+        
+        if( mapa.get(chave) != null ) {
+            Mapa m = new Mapa();
+            m.setChave(mapa1.getChave());
+            m.setTexto(mapa.get( chave ));
+            return m;
+	} else {
+            return null;
+	}
+    }
 
     public Map<BigInteger, String> getMapa() {
         return mapa;

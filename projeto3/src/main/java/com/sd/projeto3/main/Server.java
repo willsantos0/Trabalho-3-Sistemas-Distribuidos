@@ -35,10 +35,24 @@ public class Server{
 		
         executor = Executors.newFixedThreadPool(50);
         
+        mapaDAO.snapshot();
+        
         logs = mapaDAO.buscarTodos();
         
         for(Mapa m: logs){
-            crud.salvar(m);
+            switch (m.getTipoOperacaoId()) {
+                case 1:
+                    crud.salvar(m);
+                    break;
+                case 2:
+                    crud.editar(m);
+                    break;
+                case 3:
+                    crud.editar(m);
+                    break;
+                default:
+                    break;
+            }
         }
         
         System.out.println("Log do Disco Recuperado");

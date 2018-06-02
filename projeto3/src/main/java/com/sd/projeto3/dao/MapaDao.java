@@ -169,5 +169,35 @@ public class MapaDao implements Serializable {
         }
 
     }
+    
+    public void snapshot() throws Exception {
+        Connection con = null;
+
+        try {
+            con = SQLiteConnection.connect();
+            PreparedStatement pstmt = con
+                    .prepareStatement("SELECT id, chave " +
+                                "FROM mapa " +
+                                "where id not in (SELECT id from mapa order by data desc limit 5); ");
+
+            ResultSet rs = pstmt.executeQuery();
+
+            List<Integer> chaves = new ArrayList<Integer>();
+
+            while (rs.next()) {
+               
+                chaves.add(rs.getInt("chave"));
+            }
+            
+            con.close();
+            
+            for(Integer chave : chaves)
+                excluir(chave);
+            
+        } catch (SQLException | ParseException e) {
+            throw new Exception("Erro ao snapshots anteriores " + e.getMessage());
+        }
+
+    }
 
 }
