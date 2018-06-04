@@ -15,7 +15,7 @@ public class SQLiteConnection {
 
             Class.forName("org.sqlite.JDBC");
             
-            String url = "jdbc:sqlite:C:/sqlite/projeto1sd.db";
+            String url = "jdbc:sqlite:C:/temp/projeto1/bancoProjeto1.db ";
 
             SQLiteConfig config = new SQLiteConfig(); 
             config.enforceForeignKeys(true);  

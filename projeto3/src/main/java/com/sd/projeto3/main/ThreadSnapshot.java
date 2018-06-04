@@ -58,7 +58,7 @@ public class ThreadSnapshot implements Runnable{
                 System.out.println("Tamanho do Snapshot: " + crud.getMapa().size() + "\n");
                 
                 // 5 minutos
-                Thread.sleep(300000);
+                Thread.sleep(100000);
                 
             } catch (Exception ex) {
                 Logger.getLogger(ThreadSnapshot.class.getName()).log(Level.SEVERE, null, ex);

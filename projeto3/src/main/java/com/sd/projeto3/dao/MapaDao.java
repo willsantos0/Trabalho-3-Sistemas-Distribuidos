@@ -178,4 +178,42 @@ public class MapaDao implements Serializable {
 
     }
     
+    
+    
+    public List<Mapa> buscarChaves() throws Exception {
+        Connection con = null;
+
+        try {
+            con = SQLiteConnection.connect();
+            PreparedStatement pstmt = con
+                    .prepareStatement("select chave, texto, data, snapshotid "
+                            + "from mapa where data in (select max(data) from mapa where snapshotid = (select id from snapshot order by id desc limit 1) group by chave)   "
+                            + "group by chave, snapshotid");
+
+            ResultSet rs = pstmt.executeQuery();
+
+            List<Mapa> mapas = new ArrayList<Mapa>();
+
+            while (rs.next()) {
+                Mapa mapa = new Mapa();
+
+                mapa.setChave(rs.getInt("chave"));
+                mapa.setTexto(rs.getString("texto"));
+                mapa.setTipoOperacaoId(1);
+                mapa.setData(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(rs.getString("data")));
+
+                mapas.add(mapa);
+            }
+
+            con.close();
+
+            return mapas;
+
+        } catch (SQLException | ParseException e) {
+            throw new Exception("Erro ao buscar lista de mapas. " + e.getMessage());
+        }
+
+    }
+    
+    
 }

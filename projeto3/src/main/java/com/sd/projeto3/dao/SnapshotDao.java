@@ -113,7 +113,7 @@ public class SnapshotDao implements Serializable{
     
     public void copiarSnapshot(){
         try {
-            List<Mapa> mapas = mapaDAO.buscarTodos();
+            List<Mapa> mapas = mapaDAO.buscarChaves();
             
             criarSnapshot();
             
